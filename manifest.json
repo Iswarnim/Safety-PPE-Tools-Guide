@@ -1,0 +1,16 @@
+{
+  "name": "Safety PPE Guide",
+  "short_name": "Safety App",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#9b59b6",
+  "theme_color": "#9b59b6",
+  "description": "A guide for required Personal Protective Equipment (PPE).",
+  "icons": [
+    {
+      "src": "logo_icon_512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
