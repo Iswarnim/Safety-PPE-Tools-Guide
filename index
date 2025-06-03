@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safety PPE Matrix</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for better visual appeal */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #f0f4f8; /* Default outer background, visible on desktop */
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 500px; /* Max width for app-like feel */
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            flex-direction: column; /* Children (the active page) will stack */
+            flex-grow: 1; /* Takes available vertical space */
+            overflow: hidden; /* Important for child pages that might scroll */
+        }
+
+        .page {
+            display: none; /* Hide pages by default */
+        }
+
+            .page.active {
+                display: flex; /* Show active page and enable its flex properties */
+                flex-direction: column; /* Stack content vertically within the active page */
+                flex-grow: 1; /* Allow active page to fill the app-container */
+            }
+
+        /* Landing Page Specific Styles */
+        #landingPage { /* This style applies when #landingPage ALSO has .active */
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem;
+            text-align: center;
+            background-color: #6d28d9; /* Purple background */
+            color: #f3e8ff; /* Light text for contrast */
+        }
+
+        .logo-container {
+            margin-bottom: 1rem;
+            margin-top: 1rem;
+        }
+
+        .logo-image {
+            max-width: 150px;
+            width: 35vw;
+            max-height: 150px;
+            height: auto;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .landing-title {
+            color: #ffffff;
+            margin-bottom: 1.5rem;
+            font-size: clamp(1.75rem, 5vw, 2.25rem);
+            font-weight: bold;
+        }
+
+        .select-option-container {
+            position: relative;
+            width: 100%;
+            max-width: 280px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: auto; /* Pushes footer down */
+            margin-top: 1rem;
+        }
+
+        #selectOptionBtn {
+            background-color: #a78bfa;
+            color: #3730a3;
+            border: 2px solid #8b5cf6;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            #selectOptionBtn::after {
+                content: ' ▼';
+                font-size: 0.7em;
+                margin-left: 0.5em;
+            }
+
+        .option-list {
+            position: absolute;
+            top: calc(100% + 0.25rem);
+            left: 0;
+            right: 0;
+            background-color: #c4b5fd;
+            border: 2px solid #8b5cf6;
+            border-top: none;
+            border-bottom-left-radius: 0.5rem;
+            border-bottom-right-radius: 0.5rem;
+            overflow: hidden;
+            z-index: 10;
+            display: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+            .option-list.open {
+                display: block;
+            }
+
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            text-align: center;
+            color: #3730a3;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+            border-bottom: 1px solid #8b5cf6;
+        }
+
+            .option-btn:last-child {
+                border-bottom: none;
+            }
+
+            .option-btn:hover {
+                background-color: #8b5cf6;
+                color: white;
+            }
+
+        .landing-footer {
+            margin-top: auto; /* Ensures footer is pushed to bottom */
+            padding-bottom: 1rem;
+        }
+
+        .landing-footer-text {
+            font-size: 0.8rem;
+            color: #d8b4fe;
+            text-align: center;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Styles for other (non-landing) pages */
+        #activitySafetyPage, #areaSafetyPage { /* These apply when these pages ALSO have .active */
+            background-color: #f0f4f8; /* Their own background */
+            color: #1f2937; /* Their own text color */
+            padding: 1rem;
+            justify-content: flex-start; /* Align content to the top */
+        }
+
+            #activitySafetyPage header, #areaSafetyPage header {
+                width: 100%;
+                flex-shrink: 0; /* Prevent header from shrinking */
+            }
+
+            #activitySafetyPage .grid, #areaSafetyPage .grid {
+                flex-grow: 1; /* Allow grid to take available space */
+                overflow-y: hidden; /* Prevent double scrollbars, children will handle scroll */
+            }
+
+            #activitySafetyPage .md\:col-span-1, #activitySafetyPage .md\:col-span-2,
+            #areaSafetyPage .md\:col-span-1, #areaSafetyPage .md\:col-span-2 {
+                overflow-y: auto; /* Allow individual columns to scroll */
+                height: auto; /* Adjust based on content or set fixed if needed */
+            }
+
+
+        .nav-btn {
+            transition: all 0.2s ease-in-out;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            text-align: center;
+            background-color: #6b7280;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+            .nav-btn:hover {
+                background-color: #4b5563;
+            }
+
+        .activity-btn, .area-btn { /* These are the buttons inside activity/area selection lists */
+            transition: all 0.2s ease-in-out;
+            min-height: 70px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background-color: #f9fafb;
+            color: #374151;
+            border-radius: 0.375rem;
+            padding: 0.5rem;
+            font-size: 0.875rem;
+            border: 1px solid #e5e7eb; /* Added a light border */
+        }
+
+            .activity-btn.selected-activity, .area-btn.selected-area {
+                background-color: #ef4444;
+                color: white;
+                font-weight: bold;
+                border-color: #ef4444;
+            }
+
+            .activity-btn:not(.selected-activity):hover, .area-btn:not(.selected-area):hover {
+                background-color: #e5e7eb;
+            }
+
+        .ppe-item {
+            transition: all 0.2s ease-in-out;
+            border: 2px solid #93c5fd;
+            background-color: #eff6ff;
+            min-height: 90px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            text-align: center;
+        }
+
+            .ppe-item.required-ppe {
+                background-color: #3b82f6;
+                color: white;
+                border-color: #1d4ed8;
+            }
+
+            .ppe-item .icon {
+                font-size: 1.5rem;
+                margin-bottom: 0.25rem;
+            }
+
+        .ppe-item-name {
+            font-size: 0.65rem;
+            margin-top: 0.25rem;
+            line-height: 1.2;
+        }
+
+        /* Desktop specific styling for app-container frame */
+        @media (min-width: 640px) { /* sm breakpoint */
+            body {
+                padding: 1rem; /* Space around app-container */
+            }
+
+            .app-container {
+                min-height: auto; /* Let content define height */
+                max-height: 95vh; /* But not too tall */
+                border-radius: 0.75rem;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+
+        <div id="landingPage" class="page active">
+            <div class="logo-container">
+                <img src="logo_transparent.png" alt="Company Logo" class="logo-image">
+            </div>
+            <h1 class="landing-title">Safety Tools Guide</h1>
+
+            <div class="select-option-container">
+                <button id="selectOptionBtn" aria-haspopup="true" aria-expanded="false">Select an option</button>
+                <div id="optionList" class="option-list" role="menu">
+                    <button id="goToActivityViewBtn" class="option-btn" role="menuitem">A) Safety Tools by ACTIVITY</button>
+                    <button id="goToAreaViewBtn" class="option-btn" role="menuitem">B) Safety Tools by AREA</button>
+                </div>
+            </div>
+
+            <div class="landing-footer">
+                <p class="landing-footer-text">For Safety Department</p>
+                <p class="landing-footer-text">By IT Department</p>
+                <p class="landing-footer-text font-semibold">Swarnim Mishra (IT Executive)</p>
+            </div>
+        </div>
+
+        <div id="activitySafetyPage" class="page">
+            <header class="mb-4 text-center w-full">
+                <button id="backToHomeFromActivity" class="nav-btn float-left mb-2 sm:mb-0">&lt; Home</button>
+                <h1 class="text-2xl font-bold text-gray-700 clear-both pt-1">Select Activity</h1>
+            </header>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 flex-grow">
+                <div class="md:col-span-1 bg-gray-100 p-3 rounded-lg shadow">
+                    <h2 class="text-lg font-semibold text-gray-700 mb-3 text-center border-b pb-2 sticky top-0 bg-gray-100 z-5">ACTIVITIES</h2>
+                    <div id="activitiesContainer" class="space-y-2">
+                    </div>
+                </div>
+                <div class="md:col-span-2 bg-gray-100 p-3 rounded-lg shadow">
+                    <h2 class="text-lg font-semibold text-gray-700 mb-3 text-center border-b pb-2 sticky top-0 bg-gray-100 z-5">REQUIRED PPE</h2>
+                    <div id="activityPpeMatrixContainer" class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-center">
+                    </div>
+                    <div id="activityNoSelectionMessage" class="mt-4 text-center text-gray-500" style="display: block;">
+                        <p>Select an activity to see required PPE.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="areaSafetyPage" class="page">
+            <header class="mb-4 text-center w-full">
+                <button id="backToHomeFromArea" class="nav-btn float-left mb-2 sm:mb-0">&lt; Home</button>
+                <h1 class="text-2xl font-bold text-gray-700 clear-both pt-1">Select Area</h1>
+            </header>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 flex-grow">
+                <div class="md:col-span-1 bg-gray-100 p-3 rounded-lg shadow">
+                    <h2 class="text-lg font-semibold text-gray-700 mb-3 text-center border-b pb-2 sticky top-0 bg-gray-100 z-5">AREAS</h2>
+                    <div id="areasContainer" class="space-y-2">
+                    </div>
+                </div>
+                <div class="md:col-span-2 bg-gray-100 p-3 rounded-lg shadow">
+                    <h2 class="text-lg font-semibold text-gray-700 mb-3 text-center border-b pb-2 sticky top-0 bg-gray-100 z-5">REQUIRED PPE</h2>
+                    <div id="areaPpeMatrixContainer" class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-center">
+                    </div>
+                    <div id="areaNoSelectionMessage" class="mt-4 text-center text-gray-500" style="display: block;">
+                        <p>Select an area to see required PPE.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const safetyData = {
+            activities: [
+                { id: "loadingUnloading", name: "LOADING/UNLOADING (TRUCK)", ppe: ["safetyShoes", "safetyHelmet", "reflectiveJacket", "cutResistanceGloves"] },
+                { id: "manualMaterial", name: "MANUAL MATERIAL HANDLING", ppe: ["safetyShoes", "safetyHelmet", "cutResistanceGloves"] },
+                { id: "chemicalHandling", name: "CHEMICAL/PAINT/ACID HANDLING", ppe: ["safetyShoes", "chemicalHandGloves", "apron", "dustCartridgeRespirator", "safetyGoggle", "faceShieldWeldingHelmet"] },
+                { id: "glassHandling", name: "GLASS BOTTLE HANDLING", ppe: ["safetyShoes", "cutResistanceGloves", "safetyGoggle", "apron"] },
+                { id: "workingAtHeight", name: "WORKING AT HEIGHT", ppe: ["safetyShoes", "safetyHelmet", "fullBodyHarness", "anchoringPoint"] },
+                { id: "welding", name: "WELDING", ppe: ["safetyShoes", "safetyHelmet", "heatResistanceGloves", "apron", "faceShieldWeldingHelmet", "earplugMuff"] },
+                { id: "gasCuttingGrinding", name: "GAS CUTTING/GRINDING", ppe: ["safetyShoes", "safetyHelmet", "faceShieldWeldingHelmet", "heatResistanceGloves", "apron", "earplugMuff", "safetyGoggle"] }
+            ],
+            areas: [
+                { id: "sugarStorage", name: "SUGAR STORAGE AREA", ppe: ["safetyShoes", "dustCartridgeRespirator", "safetyHelmet"] },
+                { id: "chemicalStore", name: "CHEMICAL STORAGE", ppe: ["safetyShoes", "chemicalHandGloves", "safetyGoggle", "dustCartridgeRespirator", "apron"] },
+                { id: "workshop", name: "WORKSHOP/MAINTENANCE", ppe: ["safetyShoes", "safetyHelmet", "safetyGoggle", "cutResistanceGloves", "earplugMuff"] },
+                { id: "confinedSpace", name: "CONFINED SPACE ENTRY", ppe: ["safetyHelmet", "fullBodyHarness", "gasDetector", "rescueEquipment", "dustCartridgeRespirator"] }
+            ],
+            ppeItems: {
+                safetyShoes: { name: "SAFETY SHOES", icon: "👟", id: "safetyShoes" },
+                safetyHelmet: { name: "SAFETY HELMET", icon: "👷", id: "safetyHelmet" },
+                cutResistanceGloves: { name: "CUT RESIST. GLOVES", icon: "🧤", id: "cutResistanceGloves" },
+                chemicalHandGloves: { name: "CHEMICAL GLOVES", icon: "🧪🧤", id: "chemicalHandGloves" },
+                reflectiveJacket: { name: "REFLECTIVE JACKET", icon: "🧥", id: "reflectiveJacket" },
+                apron: { name: "APRON", icon: "🛡️", id: "apron" },
+                heatResistanceGloves: { name: "HEAT RESIST. GLOVES", icon: "🔥🧤", id: "heatResistanceGloves" },
+                dustCartridgeRespirator: { name: "RESPIRATOR", icon: "😷", id: "dustCartridgeRespirator" },
+                safetyGoggle: { name: "SAFETY GOGGLE", icon: "👓", id: "safetyGoggle" },
+                fullBodyHarness: { name: "FULL BODY HARNESS", icon: "🔗", id: "fullBodyHarness" },
+                faceShieldWeldingHelmet: { name: "FACE SHIELD/WELD HELMET", icon: "👨‍🏭", id: "faceShieldWeldingHelmet" },
+                earplugMuff: { name: "EARPLUG/MUFF", icon: "🎧", id: "earplugMuff" },
+                anchoringPoint: { name: "ANCHORING POINT", icon: "⚓", id: "anchoringPoint" },
+                rescueEquipment: { name: "RESCUE EQUIPMENT", icon: "🛠️", id: "rescueEquipment" },
+                gasDetector: { name: "GAS DETECTOR", icon: "📶", id: "gasDetector" }
+            }
+        };
+
+        // DOM Elements
+        const appContainer = document.querySelector('.app-container'); // Needed for delegated events if pages are complex
+        const landingPage = document.getElementById('landingPage');
+        const activitySafetyPage = document.getElementById('activitySafetyPage');
+        const areaSafetyPage = document.getElementById('areaSafetyPage');
+
+        const selectOptionBtn = document.getElementById('selectOptionBtn');
+        const optionList = document.getElementById('optionList');
+        const goToActivityViewBtn = document.getElementById('goToActivityViewBtn');
+        const goToAreaViewBtn = document.getElementById('goToAreaViewBtn');
+
+        const backToHomeFromActivityBtn = document.getElementById('backToHomeFromActivity');
+        const backToHomeFromAreaBtn = document.getElementById('backToHomeFromArea');
+
+        const activitiesContainer = document.getElementById('activitiesContainer');
+        const activityPpeMatrixContainer = document.getElementById('activityPpeMatrixContainer');
+        const activityNoSelectionMessage = document.getElementById('activityNoSelectionMessage');
+
+        const areasContainer = document.getElementById('areasContainer');
+        const areaPpeMatrixContainer = document.getElementById('areaPpeMatrixContainer');
+        const areaNoSelectionMessage = document.getElementById('areaNoSelectionMessage');
+
+        let selectedActivityId = null;
+        let selectedAreaId = null;
+        let isOptionListOpen = false;
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            const pageToShow = document.getElementById(pageId);
+            if (pageToShow) {
+                pageToShow.classList.add('active');
+            } else {
+                console.error("Page not found:", pageId);
+            }
+        }
+
+        function toggleDropdown(event) {
+            event.stopPropagation();
+            isOptionListOpen = !isOptionListOpen;
+            optionList.classList.toggle('open', isOptionListOpen);
+            selectOptionBtn.setAttribute('aria-expanded', isOptionListOpen.toString());
+        }
+
+        function closeDropdown() {
+            if (isOptionListOpen) {
+                isOptionListOpen = false;
+                optionList.classList.remove('open');
+                selectOptionBtn.setAttribute('aria-expanded', 'false');
+            }
+        }
+
+        function navigateToPage(pageId, noSelectionMessageElement, selectedId) {
+            closeDropdown();
+            showPage(pageId);
+            if (noSelectionMessageElement) {
+                noSelectionMessageElement.style.display = selectedId ? 'none' : 'block';
+            }
+        }
+
+        // Event Listeners
+        selectOptionBtn.addEventListener('click', toggleDropdown);
+        document.addEventListener('click', (event) => { // Close dropdown if click is outside
+            if (isOptionListOpen && !selectOptionBtn.contains(event.target) && !optionList.contains(event.target)) {
+                closeDropdown();
+            }
+        });
+
+        goToActivityViewBtn.addEventListener('click', (event) => {
+            event.stopPropagation(); // Prevent body click listener if any issue
+            navigateToPage('activitySafetyPage', activityNoSelectionMessage, selectedActivityId);
+        });
+
+        goToAreaViewBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
+            navigateToPage('areaSafetyPage', areaNoSelectionMessage, selectedAreaId);
+        });
+
+        backToHomeFromActivityBtn.addEventListener('click', () => showPage('landingPage'));
+        backToHomeFromAreaBtn.addEventListener('click', () => showPage('landingPage'));
+
+        function renderSelectionButtons(container, items, clickHandler, type) {
+            container.innerHTML = '';
+            if (!items || items.length === 0) {
+                container.innerHTML = `<p class="text-gray-500 text-sm p-2">No ${type}s available.</p>`;
+                return;
+            }
+            items.forEach(item => {
+                const button = document.createElement('button');
+                button.className = `${type}-btn w-full p-2.5 text-xs sm:text-sm rounded-md shadow-sm border border-gray-300 text-left focus:outline-none focus:ring-2 focus:ring-purple-500 hover:bg-gray-100`;
+                button.textContent = item.name;
+                button.dataset.itemId = item.id;
+                button.addEventListener('click', () => clickHandler(item.id, type)); // Pass type for targeted update
+                container.appendChild(button);
+            });
+        }
+
+        function renderPpeItems(container, requiredPpeIds) {
+            container.innerHTML = '';
+            if (!requiredPpeIds || requiredPpeIds.length === 0) return;
+
+            requiredPpeIds.forEach(ppeId => {
+                const item = safetyData.ppeItems && safetyData.ppeItems[ppeId];
+                if (item) {
+                    const ppeDiv = document.createElement('div');
+                    ppeDiv.className = 'ppe-item p-3 rounded-lg shadow required-ppe';
+                    ppeDiv.dataset.ppeId = item.id;
+                    ppeDiv.innerHTML = `<span class="icon mb-1">${item.icon}</span><span class="ppe-item-name text-xs">${item.name}</span>`;
+                    container.appendChild(ppeDiv);
+                }
+            });
+        }
+
+        function handleActivitySelection(activityId) {
+            selectedActivityId = activityId;
+            document.querySelectorAll('#activitiesContainer .activity-btn').forEach(btn => {
+                const isSelected = btn.dataset.itemId === activityId;
+                btn.classList.toggle('selected-activity', isSelected);
+                // Ensure Tailwind classes for selected state are properly applied/removed
+                if (isSelected) {
+                    btn.classList.add('bg-red-500', 'text-white', 'font-bold', 'border-red-500');
+                    btn.classList.remove('bg-gray-50', 'text-gray-700', 'hover:bg-gray-100', 'border-gray-300');
+                } else {
+                    btn.classList.remove('bg-red-500', 'text-white', 'font-bold', 'border-red-500');
+                    btn.classList.add('bg-gray-50', 'text-gray-700', 'hover:bg-gray-100', 'border-gray-300');
+                }
+            });
+
+            const selectedActivity = safetyData.activities.find(act => act.id === activityId);
+            const requiredPpe = selectedActivity ? selectedActivity.ppe : [];
+            renderPpeItems(activityPpeMatrixContainer, requiredPpe);
+            activityNoSelectionMessage.style.display = requiredPpe.length > 0 ? 'none' : 'block';
+        }
+
+        function handleAreaSelection(areaId) {
+            selectedAreaId = areaId;
+            document.querySelectorAll('#areasContainer .area-btn').forEach(btn => {
+                const isSelected = btn.dataset.itemId === areaId;
+                btn.classList.toggle('selected-area', isSelected);
+                if (isSelected) {
+                    btn.classList.add('bg-red-500', 'text-white', 'font-bold', 'border-red-500');
+                    btn.classList.remove('bg-gray-50', 'text-gray-700', 'hover:bg-gray-100', 'border-gray-300');
+                } else {
+                    btn.classList.remove('bg-red-500', 'text-white', 'font-bold', 'border-red-500');
+                    btn.classList.add('bg-gray-50', 'text-gray-700', 'hover:bg-gray-100', 'border-gray-300');
+                }
+            });
+
+            const selectedArea = safetyData.areas.find(area => area.id === areaId);
+            const requiredPpe = selectedArea ? selectedArea.ppe : [];
+            renderPpeItems(areaPpeMatrixContainer, requiredPpe);
+            areaNoSelectionMessage.style.display = requiredPpe.length > 0 ? 'none' : 'block';
+        }
+
+        function initApp() {
+            renderSelectionButtons(activitiesContainer, safetyData.activities, handleActivitySelection, 'activity');
+            renderSelectionButtons(areasContainer, safetyData.areas, handleAreaSelection, 'area');
+            showPage('landingPage'); // Ensure landing page is shown first
+        }
+
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
