@@ -3,6 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#9b59b6"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Safety App">
+    <link rel="apple-touch-icon" href="logo_icon_512.png">
+
     <title>Safety PPE Matrix</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -31,11 +38,11 @@
             display: none; /* Hide pages by default */
         }
 
-            .page.active {
-                display: flex; /* Show active page and enable its flex properties */
-                flex-direction: column; /* Stack content vertically within the active page */
-                flex-grow: 1; /* Allow active page to fill the app-container */
-            }
+        .page.active {
+            display: flex; /* Show active page and enable its flex properties */
+            flex-direction: column; /* Stack content vertically within the active page */
+            flex-grow: 1; /* Allow active page to fill the app-container */
+        }
 
         /* Landing Page Specific Styles */
         #landingPage { /* This style applies when #landingPage ALSO has .active */
@@ -43,7 +50,8 @@
             justify-content: space-between;
             padding: 1.5rem;
             text-align: center;
-            background-color: #6d28d9; /* Purple background */
+            /* MODIFIED: Changed background color to Amethyst Purple */
+            background-color: #9b59b6; 
             color: #f3e8ff; /* Light text for contrast */
         }
 
@@ -80,9 +88,9 @@
         }
 
         #selectOptionBtn {
-            background-color: #a78bfa;
-            color: #3730a3;
-            border: 2px solid #8b5cf6;
+            background-color: #d8bfd8; /* Lighter shade of amethyst */
+            color: #4b0082; /* Indigo */
+            border: 2px solid #8a2be2; /* Blue-violet */
             padding: 0.75rem 1.5rem;
             border-radius: 0.5rem;
             font-weight: 600;
@@ -105,8 +113,8 @@
             top: calc(100% + 0.25rem);
             left: 0;
             right: 0;
-            background-color: #c4b5fd;
-            border: 2px solid #8b5cf6;
+            background-color: #e6e6fa; /* Lavender */
+            border: 2px solid #8a2be2;
             border-top: none;
             border-bottom-left-radius: 0.5rem;
             border-bottom-right-radius: 0.5rem;
@@ -125,11 +133,11 @@
             width: 100%;
             padding: 0.75rem 1.5rem;
             text-align: center;
-            color: #3730a3;
+            color: #4b0082;
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-            border-bottom: 1px solid #8b5cf6;
+            border-bottom: 1px solid #8a2be2;
         }
 
             .option-btn:last-child {
@@ -137,7 +145,7 @@
             }
 
             .option-btn:hover {
-                background-color: #8b5cf6;
+                background-color: #8a2be2;
                 color: white;
             }
 
@@ -148,7 +156,7 @@
 
         .landing-footer-text {
             font-size: 0.8rem;
-            color: #d8b4fe;
+            color: #e6e6fa;
             text-align: center;
             margin-bottom: 0.25rem;
         }
@@ -274,7 +282,7 @@
             <div class="logo-container">
                 <img src="logo_transparent.png" alt="Company Logo" class="logo-image">
             </div>
-            <h1 class="landing-title">Safety Tools Guide</h1>
+            <h1 class="landing-title">Safety PPE Guide</h1>
 
             <div class="select-option-container">
                 <button id="selectOptionBtn" aria-haspopup="true" aria-expanded="false">Select an option</button>
@@ -506,6 +514,11 @@
             const requiredPpe = selectedActivity ? selectedActivity.ppe : [];
             renderPpeItems(activityPpeMatrixContainer, requiredPpe);
             activityNoSelectionMessage.style.display = requiredPpe.length > 0 ? 'none' : 'block';
+            
+            // ADDED: Auto-scroll to the PPE section
+            if (requiredPpe.length > 0) {
+                 activityPpeMatrixContainer.parentElement.querySelector('h2').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         }
 
         function handleAreaSelection(areaId) {
@@ -526,6 +539,11 @@
             const requiredPpe = selectedArea ? selectedArea.ppe : [];
             renderPpeItems(areaPpeMatrixContainer, requiredPpe);
             areaNoSelectionMessage.style.display = requiredPpe.length > 0 ? 'none' : 'block';
+
+            // ADDED: Auto-scroll to the PPE section
+            if (requiredPpe.length > 0) {
+                areaPpeMatrixContainer.parentElement.querySelector('h2').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         }
 
         function initApp() {
