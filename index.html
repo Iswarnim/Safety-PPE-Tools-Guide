@@ -45,12 +45,11 @@
         }
 
         /* Landing Page Specific Styles */
-        #landingPage { /* This style applies when #landingPage ALSO has .active */
+        #landingPage.active { /* This style applies when #landingPage ALSO has .active */
             align-items: center;
             justify-content: space-between;
             padding: 1.5rem;
             text-align: center;
-            /* MODIFIED: Changed background color to Amethyst Purple */
             background-color: #9b59b6; 
             color: #f3e8ff; /* Light text for contrast */
         }
@@ -68,6 +67,8 @@
             display: block;
             margin-left: auto;
             margin-right: auto;
+            /* Fallback for image loading error */
+            onerror: "this.onerror=null; this.src='https://placehold.co/150x150/9b59b6/FFFFFF?text=Logo';"
         }
 
         .landing-title {
@@ -102,11 +103,11 @@
             justify-content: center;
         }
 
-            #selectOptionBtn::after {
-                content: ' ▼';
-                font-size: 0.7em;
-                margin-left: 0.5em;
-            }
+        #selectOptionBtn::after {
+            content: ' ▼';
+            font-size: 0.7em;
+            margin-left: 0.5em;
+        }
 
         .option-list {
             position: absolute;
@@ -124,9 +125,9 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
-            .option-list.open {
-                display: block;
-            }
+        .option-list.open {
+            display: block;
+        }
 
         .option-btn {
             display: block;
@@ -140,14 +141,14 @@
             border-bottom: 1px solid #8a2be2;
         }
 
-            .option-btn:last-child {
-                border-bottom: none;
-            }
+        .option-btn:last-child {
+            border-bottom: none;
+        }
 
-            .option-btn:hover {
-                background-color: #8a2be2;
-                color: white;
-            }
+        .option-btn:hover {
+            background-color: #8a2be2;
+            color: white;
+        }
 
         .landing-footer {
             margin-top: auto; /* Ensures footer is pushed to bottom */
@@ -162,28 +163,49 @@
         }
 
         /* Styles for other (non-landing) pages */
-        #activitySafetyPage, #areaSafetyPage { /* These apply when these pages ALSO have .active */
+        #activitySafetyPage.active, #areaSafetyPage.active { 
             background-color: #f0f4f8; /* Their own background */
             color: #1f2937; /* Their own text color */
             padding: 1rem;
             justify-content: flex-start; /* Align content to the top */
         }
 
-            #activitySafetyPage header, #areaSafetyPage header {
-                width: 100%;
-                flex-shrink: 0; /* Prevent header from shrinking */
-            }
+        #activitySafetyPage header, #areaSafetyPage header {
+            width: 100%;
+            flex-shrink: 0; /* Prevent header from shrinking */
+        }
 
-            #activitySafetyPage .grid, #areaSafetyPage .grid {
-                flex-grow: 1; /* Allow grid to take available space */
-                overflow-y: hidden; /* Prevent double scrollbars, children will handle scroll */
-            }
+        #activitySafetyPage .page-grid, #areaSafetyPage .page-grid { /* Renamed class for clarity */
+            flex-grow: 1; /* Allow grid to take available space */
+            overflow-y: hidden; /* Prevent double scrollbars, children will handle scroll */
+            display: flex; /* For grid layout */
+            flex-direction: column; /* Stack header and content grid */
+        }
+        
+        #activitySafetyPage .content-grid-wrapper, #areaSafetyPage .content-grid-wrapper { /* New wrapper for the two columns */
+            flex-grow: 1;
+            display: grid; /* Use grid for columns */
+            grid-template-columns: 1fr; /* Default to 1 column for mobile */
+            gap: 1rem; /* Gap between columns */
+            overflow: hidden; /* Important for children scrolling */
+        }
 
-            #activitySafetyPage .md\:col-span-1, #activitySafetyPage .md\:col-span-2,
-            #areaSafetyPage .md\:col-span-1, #areaSafetyPage .md\:col-span-2 {
-                overflow-y: auto; /* Allow individual columns to scroll */
-                height: auto; /* Adjust based on content or set fixed if needed */
+        @media (min-width: 768px) { /* md breakpoint */
+            #activitySafetyPage .content-grid-wrapper, #areaSafetyPage .content-grid-wrapper {
+                grid-template-columns: 1fr 2fr; /* 1/3 and 2/3 for larger screens */
             }
+        }
+        
+        #activitySafetyPage .list-column, #activitySafetyPage .ppe-column,
+        #areaSafetyPage .list-column, #areaSafetyPage .ppe-column {
+            overflow-y: auto; /* Allow individual columns to scroll */
+            height: 100%; /* Make columns take full height of their grid cell */
+            max-height: calc(100vh - 150px); /* Adjust based on header height, approximate */
+            padding: 0.75rem;
+            background-color: #f9fafb; /* Light background for columns */
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
 
 
         .nav-btn {
@@ -197,36 +219,39 @@
             margin-bottom: 1rem;
         }
 
-            .nav-btn:hover {
-                background-color: #4b5563;
-            }
+        .nav-btn:hover {
+            background-color: #4b5563;
+        }
 
         .activity-btn, .area-btn { /* These are the buttons inside activity/area selection lists */
             transition: all 0.2s ease-in-out;
-            min-height: 70px;
+            min-height: 60px; /* Reduced min-height slightly */
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            background-color: #f9fafb;
+            background-color: #ffffff; /* Brighter background */
             color: #374151;
             border-radius: 0.375rem;
-            padding: 0.5rem;
-            font-size: 0.875rem;
-            border: 1px solid #e5e7eb; /* Added a light border */
+            padding: 0.75rem 0.5rem; /* Adjusted padding */
+            font-size: 0.8rem; /* Slightly smaller font */
+            border: 1px solid #d1d5db; 
+            cursor: pointer;
+            line-height: 1.2; /* Improved line height for wrapped text */
+        }
+        .activity-btn.selected-activity, .area-btn.selected-area {
+            background-color: #ef4444;
+            color: white;
+            font-weight: bold;
+            border-color: #dc2626; /* Darker red border for selected */
         }
 
-            .activity-btn.selected-activity, .area-btn.selected-area {
-                background-color: #ef4444;
-                color: white;
-                font-weight: bold;
-                border-color: #ef4444;
-            }
+        .activity-btn:not(.selected-activity):hover, .area-btn:not(.selected-area):hover {
+            background-color: #f3f4f6; /* Lighter hover */
+            border-color: #9ca3af;
+        }
 
-            .activity-btn:not(.selected-activity):hover, .area-btn:not(.selected-area):hover {
-                background-color: #e5e7eb;
-            }
 
         .ppe-item {
             transition: all 0.2s ease-in-out;
@@ -242,21 +267,22 @@
             text-align: center;
         }
 
-            .ppe-item.required-ppe {
-                background-color: #3b82f6;
-                color: white;
-                border-color: #1d4ed8;
-            }
+        .ppe-item.required-ppe { /* This class is always added now if it's a required PPE */
+            background-color: #3b82f6;
+            color: white;
+            border-color: #1d4ed8;
+        }
 
-            .ppe-item .icon {
-                font-size: 1.5rem;
-                margin-bottom: 0.25rem;
-            }
+        .ppe-item .icon {
+            font-size: 1.5rem; /* Slightly larger icon */
+            margin-bottom: 0.35rem; /* More space below icon */
+        }
 
         .ppe-item-name {
-            font-size: 0.65rem;
+            font-size: 0.65rem; /* Ensure small font for longer names */
             margin-top: 0.25rem;
-            line-height: 1.2;
+            line-height: 1.1; /* Tighter line height for name */
+            font-weight: 500; /* Slightly bolder name */
         }
 
         /* Desktop specific styling for app-container frame */
@@ -278,7 +304,8 @@
 
     <div class="app-container">
 
-        <div id="landingPage" class="page active">
+        <!-- Landing Page -->
+        <div id="landingPage" class="page">
             <div class="logo-container">
                 <img src="logo_transparent.png" alt="Company Logo" class="logo-image">
             </div>
@@ -299,20 +326,23 @@
             </div>
         </div>
 
+        <!-- Activity Safety Page -->
         <div id="activitySafetyPage" class="page">
             <header class="mb-4 text-center w-full">
                 <button id="backToHomeFromActivity" class="nav-btn float-left mb-2 sm:mb-0">&lt; Home</button>
                 <h1 class="text-2xl font-bold text-gray-700 clear-both pt-1">Select Activity</h1>
             </header>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 flex-grow">
-                <div class="md:col-span-1 bg-gray-100 p-3 rounded-lg shadow">
+            <div class="content-grid-wrapper"> <!-- Renamed class and structure for grid -->
+                <div class="list-column"> <!-- Column for activities list -->
                     <h2 class="text-lg font-semibold text-gray-700 mb-3 text-center border-b pb-2 sticky top-0 bg-gray-100 z-5">ACTIVITIES</h2>
                     <div id="activitiesContainer" class="space-y-2">
+                        <!-- Activity buttons will be rendered here -->
                     </div>
                 </div>
-                <div class="md:col-span-2 bg-gray-100 p-3 rounded-lg shadow">
+                <div class="ppe-column"> <!-- Column for PPE matrix -->
                     <h2 class="text-lg font-semibold text-gray-700 mb-3 text-center border-b pb-2 sticky top-0 bg-gray-100 z-5">REQUIRED PPE</h2>
                     <div id="activityPpeMatrixContainer" class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-center">
+                        <!-- PPE items will be rendered here -->
                     </div>
                     <div id="activityNoSelectionMessage" class="mt-4 text-center text-gray-500" style="display: block;">
                         <p>Select an activity to see required PPE.</p>
@@ -321,20 +351,23 @@
             </div>
         </div>
 
+        <!-- Area Safety Page -->
         <div id="areaSafetyPage" class="page">
             <header class="mb-4 text-center w-full">
                 <button id="backToHomeFromArea" class="nav-btn float-left mb-2 sm:mb-0">&lt; Home</button>
                 <h1 class="text-2xl font-bold text-gray-700 clear-both pt-1">Select Area</h1>
             </header>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 flex-grow">
-                <div class="md:col-span-1 bg-gray-100 p-3 rounded-lg shadow">
+            <div class="content-grid-wrapper"> <!-- Renamed class and structure for grid -->
+                <div class="list-column"> <!-- Column for areas list -->
                     <h2 class="text-lg font-semibold text-gray-700 mb-3 text-center border-b pb-2 sticky top-0 bg-gray-100 z-5">AREAS</h2>
                     <div id="areasContainer" class="space-y-2">
+                        <!-- Area buttons will be rendered here -->
                     </div>
                 </div>
-                <div class="md:col-span-2 bg-gray-100 p-3 rounded-lg shadow">
+                <div class="ppe-column"> <!-- Column for PPE matrix -->
                     <h2 class="text-lg font-semibold text-gray-700 mb-3 text-center border-b pb-2 sticky top-0 bg-gray-100 z-5">REQUIRED PPE</h2>
                     <div id="areaPpeMatrixContainer" class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-center">
+                        <!-- PPE items will be rendered here -->
                     </div>
                     <div id="areaNoSelectionMessage" class="mt-4 text-center text-gray-500" style="display: block;">
                         <p>Select an area to see required PPE.</p>
@@ -348,54 +381,73 @@
     <script>
         const safetyData = {
             activities: [
-                { id: "loadingUnloading", name: "LOADING/UNLOADING (TRUCK)", ppe: ["safetyShoes", "safetyHelmet",  "cutResistanceGloves"] },
+                { id: "loadingUnloading", name: "LOADING/UNLOADING (TRUCK)", ppe: ["safetyShoes", "safetyHelmet", "cutResistanceGloves"] },
                 { id: "manualMaterial", name: "MANUAL MATERIAL HANDLING", ppe: ["safetyShoes", "safetyHelmet", "cutResistanceGloves"] },
                 { id: "chemicalHandling", name: "CHEMICAL/PAINT/ACID HANDLING", ppe: ["safetyShoes", "chemicalHandGloves", "apron", "dustCartridgeRespirator", "safetyGoggle", "faceShieldWeldingHelmet"] },
                 { id: "glassHandling", name: "GLASS BOTTLE HANDLING", ppe: ["safetyShoes", "cutResistanceGloves", "safetyGoggle", "apron"] },
-                { id: "workingAtHeight", name: "WORKING AT HEIGHT", ppe: ["safetyShoes", "safetyHelmet","reflectiveJacket", "fullBodyHarness", "anchoringPoint","Working Platform"] },
+                { id: "workingAtHeight", name: "WORKING AT HEIGHT", ppe: ["safetyShoes", "safetyHelmet","reflectiveJacket", "fullBodyHarness", "anchoringPoint","WorkingPlatform"] },
                 { id: "welding", name: "WELDING", ppe: ["safetyShoes", "safetyHelmet", "reflectiveJacket", "dustCartridgeRespirator", "heatResistanceGloves", "apron", "faceShieldWeldingHelmet"] },
                 { id: "gasCutting", name: "GAS CUTTING", ppe: ["safetyShoes", "safetyHelmet", "reflectiveJacket", "dustCartridgeRespirator", "faceShieldWeldingHelmet", "heatResistanceGloves"] },
-                { id: "grinding", name: "GRINDING WORK", ppe: ["safetyShoes", "safetyHelmet", "reflectiveJacket", "dustCartridgeRespirator", "faceShieldWeldingHelmet", "cutResistanceGloves"] },           
+                { id: "grinding", name: "GRINDING WORK", ppe: ["safetyShoes", "safetyHelmet", "reflectiveJacket", "dustCartridgeRespirator", "faceShieldWeldingHelmet", "cutResistanceGloves"] },
                 { id: "BriquetteAshHandling", name: "BRIQUETTE & ASH HANDLING", ppe: ["safetyShoes", "heatResistanceGloves" , "dustCartridgeRespirator"] },
                 { id: "Housekeepingwork", name: "HOUSEKEEPING WORK", ppe: ["safetyShoes", "handGloves", "reflectiveJacket", "dustCartridgeRespirator"] },
                 { id: "Electricalworkonlivepannel", name: "ELECTRICAL WORK ON LIVE PANNEL", ppe: ["safetyHelmet", "electricalGloves","ElectricalShoes", "arcFlashSuit"] },
                 { id: "Forkliftbtperation", name: "FORKLIFT & BT OPERATION", ppe: ["safetyHelmet", "safetyShoes", "reflectiveJacket", "seatBelt"] },
-                { id: "Batterychargingwashing", name: "Battery CHARGING & WASHING", ppe: ["safetyShoes", "safetyHelmet", "reflectiveJacket", "appron", "safetyGoggles"] },
+                { id: "Batterychargingwashing", name: "BATTERY CHARGING & WASHING", ppe: ["safetyShoes", "safetyHelmet", "reflectiveJacket", "apron", "safetyGoggle", "chemicalResistanceGloves"] }, // Corrected: appron->apron, safetyGoggles->safetyGoggle, added chemicalResistanceGloves for battery acid
                 { id: "Workingnearwater", name: "WORKING NEAR WATER", ppe: ["safetyShoes", "safetyHelmet", "lifebouyJacket", "safetyHarness"] },
                 { id: "Civilwork", name: "CIVIL WORK (GENERAL WORK)", ppe: ["safetyShoes", "safetyHelmet","cutResistanceGloves","reflectiveJacket"] },
-                { id: "Confinedspace", name: "Confined Space", ppe: ["safetyShoes", "safetyHelmet", "safetyJacket", "resueEquipment", "exhaustFan"] },
-                { id: "CIPwork", name: "CIP Work", ppe: ["gumBoot", "chemicalResistanceGloves", "apron", "safetySplash", "earplug"] },
-                { id: "Changeoveronlines", name: "Changeover on Lines", ppe: ["safetyShoes", "cutResistanceGloves", "safetyGlasses"] },
-                { id: "Workinginhighnoisearea", name: "Working in High Noise Area", ppe: ["safetyShoes", "earplug"] },
-                { id: "Manualbriquettefeeding", name: "Manual Briquette Feeding", ppe: ["safetyShoes", "boilerSuit", "heatResistanceGloves", "safetyHelmet", "dustCartridgeRespirator"]}
-        ],
+                { id: "Confinedspace", name: "CONFINED SPACE ENTRY", ppe: ["safetyShoes", "safetyHelmet", "safetyJacket", "rescueEquipment", "exhaustFan", "fullBodyHarness", "gasDetector" ] }, // Added fullBodyHarness and gasDetector as often required
+                { id: "CIPwork", name: "CIP WORK (CLEANING IN PLACE)", ppe: ["gumBoot", "chemicalResistanceGloves", "apron", "safetySplash", "faceShieldWeldingHelmet", "earplug"] }, // Added faceShield for full face protection
+                { id: "Changeoveronlines", name: "CHANGEOVER ON LINES", ppe: ["safetyShoes", "cutResistanceGloves", "safetyGlasses"] },
+                { id: "Workinginhighnoisearea", name: "WORKING IN HIGH NOISE AREA", ppe: ["safetyShoes", "earplugMuff"] }, // Changed to earplugMuff for consistency
+                { id: "Manualbriquettefeeding", name: "MANUAL BRIQUETTE FEEDING", ppe: ["safetyShoes", "boilerSuit", "heatResistanceGloves", "safetyHelmet", "dustCartridgeRespirator"]},
+                // Example of a new activity added:
+                { id: "paintingHighArea", name: "PAINTING (HIGH AREA)", ppe: ["safetyHelmet", "fullBodyHarness", "safetyShoes", "dustCartridgeRespirator", "safetyGoggle", "WorkingPlatform"] }
+            ],
             areas: [
                 { id: "sugarStorage", name: "SUGAR STORAGE AREA", ppe: ["safetyShoes", "dustCartridgeRespirator", "safetyHelmet"] },
-                { id: "chemicalStore", name: "CHEMICAL STORAGE", ppe: ["safetyShoes", "chemicalHandGloves", "safetyGoggle", "dustCartridgeRespirator", "apron"] },
+                { id: "chemicalStore", name: "CHEMICAL STORAGE", ppe: ["safetyShoes", "chemicalHandGloves", "safetyGoggle", "dustCartridgeRespirator", "apron", "faceShieldWeldingHelmet"] }, // Added face shield for more protection
                 { id: "workshop", name: "WORKSHOP/MAINTENANCE", ppe: ["safetyShoes", "safetyHelmet", "safetyGoggle", "cutResistanceGloves", "earplugMuff"] },
-                { id: "confinedSpace", name: "CONFINED SPACE ENTRY", ppe: ["safetyHelmet", "fullBodyHarness", "gasDetector", "rescueEquipment", "dustCartridgeRespirator"] }
+                { id: "generalPlantArea", name: "GENERAL PLANT AREA", ppe: ["safetyShoes", "safetyHelmet", "reflectiveJacket"]}, // Added a common area
+                { id: "electricalRoom", name: "ELECTRICAL ROOM/PANELS", ppe: ["ElectricalShoes", "safetyHelmet", "electricalGloves", "arcFlashSuit"] }, // Added specific area for electrical
             ],
             ppeItems: {
                 safetyShoes: { name: "SAFETY SHOES", icon: "👟", id: "safetyShoes" },
                 safetyHelmet: { name: "SAFETY HELMET", icon: "👷", id: "safetyHelmet" },
                 cutResistanceGloves: { name: "CUT RESIST. GLOVES", icon: "🧤", id: "cutResistanceGloves" },
-                chemicalHandGloves: { name: "CHEMICAL GLOVES", icon: "🧪🧤", id: "chemicalHandGloves" },
+                chemicalHandGloves: { name: "CHEMICAL HAND GLOVES", icon: "🧪🧤", id: "chemicalHandGloves" },
                 reflectiveJacket: { name: "REFLECTIVE JACKET", icon: "🧥", id: "reflectiveJacket" },
-                apron: { name: "APRON", icon: "🛡️", id: "apron" },
+                apron: { name: "APRON (CHEMICAL/GENERAL)", icon: "🛡️", id: "apron" },
                 heatResistanceGloves: { name: "HEAT RESIST. GLOVES", icon: "🔥🧤", id: "heatResistanceGloves" },
-                dustCartridgeRespirator: { name: "RESPIRATOR", icon: "😷", id: "dustCartridgeRespirator" },
-                safetyGoggle: { name: "SAFETY GOGGLE", icon: "👓", id: "safetyGoggle" },
+                dustCartridgeRespirator: { name: "DUST/CARTRIDGE RESPIRATOR", icon: "😷", id: "dustCartridgeRespirator" },
+                safetyGoggle: { name: "SAFETY GOGGLES", icon: "👓", id: "safetyGoggle" },
                 fullBodyHarness: { name: "FULL BODY HARNESS", icon: "🔗", id: "fullBodyHarness" },
                 faceShieldWeldingHelmet: { name: "FACE SHIELD/WELD HELMET", icon: "👨‍🏭", id: "faceShieldWeldingHelmet" },
-                earplugMuff: { name: "EARPLUG/MUFF", icon: "🎧", id: "earplugMuff" },
+                earplugMuff: { name: "EARPLUG / EARMUFF", icon: "�", id: "earplugMuff" },
                 anchoringPoint: { name: "ANCHORING POINT", icon: "⚓", id: "anchoringPoint" },
-                rescueEquipment: { name: "RESCUE EQUIPMENT", icon: "🛠️", id: "rescueEquipment" },
-                gasDetector: { name: "GAS DETECTOR", icon: "📶", id: "gasDetector" }
+                rescueEquipment: { name: "RESCUE EQUIPMENT", icon: "🛠️", id: "rescueEquipment" }, // Corrected typo from resueEquipment
+                gasDetector: { name: "GAS DETECTOR", icon: "📶", id: "gasDetector" },
+                // Added missing PPE items based on activities/areas:
+                WorkingPlatform: { name: "WORKING PLATFORM / LADDER", icon: "🪜", id: "WorkingPlatform" },
+                handGloves: { name: "HAND GLOVES (GENERAL)", icon: "🧤", id: "handGloves" },
+                electricalGloves: { name: "ELECTRICAL GLOVES (LV/HV)", icon: "⚡🧤", id: "electricalGloves" },
+                ElectricalShoes: { name: "ELECTRICAL INSULATING SHOES", icon: "⚡👟", id: "ElectricalShoes" },
+                arcFlashSuit: { name: "ARC FLASH SUIT", icon: "🔥🧥", id: "arcFlashSuit" },
+                seatBelt: { name: "SEAT BELT (VEHICLE/FORKLIFT)", icon: " безопасности", id: "seatBelt" }, // Russian "safety" icon example, replace if needed
+                lifebouyJacket: { name: "LIFEBUOY / LIFE JACKET", icon: " buoyancy jacket", id: "lifebouyJacket" }, // Placeholder icon
+                safetyHarness: { name: "SAFETY HARNESS (WATER/HEIGHT)", icon: "⚓🔗", id: "safetyHarness" }, // Combined icon
+                safetyJacket: { name: "SAFETY JACKET (CONFINED SPACE)", icon: "🧥", id: "safetyJacket" },
+                exhaustFan: { name: "EXHAUST FAN / VENTILATION", icon: "💨", id: "exhaustFan" },
+                gumBoot: { name: "GUM BOOTS (WATERPROOF)", icon: "👢", id: "gumBoot" },
+                chemicalResistanceGloves: { name: "CHEMICAL RESIST. GLOVES (HEAVY DUTY)", icon: "🧪🧤+", id: "chemicalResistanceGloves"},
+                safetySplash: { name: "SAFETY SPLASH GOGGLES / SHIELD", icon: "💦👓", id: "safetySplash" },
+                earplug: { name: "EARPLUGS (DISPOSABLE)", icon: "👂", id: "earplug" },
+                safetyGlasses: { name: "SAFETY GLASSES (IMPACT)", icon: "🤓", id: "safetyGlasses" },
+                boilerSuit: { name: "BOILER SUIT / COVERALL", icon: "👨‍🔧", id: "boilerSuit" }
             }
         };
 
         // DOM Elements
-        const appContainer = document.querySelector('.app-container'); // Needed for delegated events if pages are complex
         const landingPage = document.getElementById('landingPage');
         const activitySafetyPage = document.getElementById('activitySafetyPage');
         const areaSafetyPage = document.getElementById('areaSafetyPage');
@@ -420,17 +472,27 @@
         let selectedAreaId = null;
         let isOptionListOpen = false;
 
-        function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-            const pageToShow = document.getElementById(pageId);
-            if (pageToShow) {
-                pageToShow.classList.add('active');
-            } else {
-                console.error("Page not found:", pageId);
+        // --- Page Navigation Logic ---
+        function handleNavigation() {
+            const hash = window.location.hash.substring(1); // Remove #
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+
+            closeDropdown(); // Close dropdown on any navigation
+
+            if (hash === 'activitySafetyPage') {
+                activitySafetyPage.classList.add('active');
+                activityNoSelectionMessage.style.display = selectedActivityId ? 'none' : 'block';
+            } else if (hash === 'areaSafetyPage') {
+                areaSafetyPage.classList.add('active');
+                areaNoSelectionMessage.style.display = selectedAreaId ? 'none' : 'block';
+            } else { // Default to landing page
+                landingPage.classList.add('active');
+                if (hash !== 'landingPage' && hash !== '') { // If invalid hash, redirect to landing
+                    window.location.hash = 'landingPage';
+                }
             }
         }
+
 
         function toggleDropdown(event) {
             event.stopPropagation();
@@ -446,36 +508,37 @@
                 selectOptionBtn.setAttribute('aria-expanded', 'false');
             }
         }
-
-        function navigateToPage(pageId, noSelectionMessageElement, selectedId) {
-            closeDropdown();
-            showPage(pageId);
-            if (noSelectionMessageElement) {
-                noSelectionMessageElement.style.display = selectedId ? 'none' : 'block';
-            }
-        }
-
-        // Event Listeners
+        
+        // --- Event Listeners for Navigation and Dropdown ---
         selectOptionBtn.addEventListener('click', toggleDropdown);
-        document.addEventListener('click', (event) => { // Close dropdown if click is outside
+        document.addEventListener('click', (event) => {
             if (isOptionListOpen && !selectOptionBtn.contains(event.target) && !optionList.contains(event.target)) {
                 closeDropdown();
             }
         });
 
         goToActivityViewBtn.addEventListener('click', (event) => {
-            event.stopPropagation(); // Prevent body click listener if any issue
-            navigateToPage('activitySafetyPage', activityNoSelectionMessage, selectedActivityId);
+            event.stopPropagation();
+            window.location.hash = 'activitySafetyPage';
         });
 
         goToAreaViewBtn.addEventListener('click', (event) => {
             event.stopPropagation();
-            navigateToPage('areaSafetyPage', areaNoSelectionMessage, selectedAreaId);
+            window.location.hash = 'areaSafetyPage';
         });
 
-        backToHomeFromActivityBtn.addEventListener('click', () => showPage('landingPage'));
-        backToHomeFromAreaBtn.addEventListener('click', () => showPage('landingPage'));
+        backToHomeFromActivityBtn.addEventListener('click', () => {
+            window.location.hash = 'landingPage';
+        });
+        backToHomeFromAreaBtn.addEventListener('click', () => {
+            window.location.hash = 'landingPage';
+        });
 
+        window.addEventListener('hashchange', handleNavigation);
+        // --- End Page Navigation Logic ---
+
+
+        // --- Data Rendering Logic ---
         function renderSelectionButtons(container, items, clickHandler, type) {
             container.innerHTML = '';
             if (!items || items.length === 0) {
@@ -484,43 +547,50 @@
             }
             items.forEach(item => {
                 const button = document.createElement('button');
-                button.className = `${type}-btn w-full p-2.5 text-xs sm:text-sm rounded-md shadow-sm border border-gray-300 text-left focus:outline-none focus:ring-2 focus:ring-purple-500 hover:bg-gray-100`;
+                // Using the specific CSS classes: activity-btn or area-btn
+                button.className = `${type}-btn w-full text-left`; // Base classes, specific styling is in CSS
                 button.textContent = item.name;
                 button.dataset.itemId = item.id;
-                button.addEventListener('click', () => clickHandler(item.id, type)); // Pass type for targeted update
+                button.addEventListener('click', () => clickHandler(item.id)); // Simplified click handler call
                 container.appendChild(button);
             });
         }
 
         function renderPpeItems(container, requiredPpeIds) {
             container.innerHTML = '';
-            if (!requiredPpeIds || requiredPpeIds.length === 0) return;
+            if (!requiredPpeIds || requiredPpeIds.length === 0) {
+                 // No PPE message is handled by a separate div now.
+                return;
+            }
 
             requiredPpeIds.forEach(ppeId => {
-                const item = safetyData.ppeItems && safetyData.ppeItems[ppeId];
+                const item = safetyData.ppeItems[ppeId]; // Directly access using ppeId
                 if (item) {
                     const ppeDiv = document.createElement('div');
-                    ppeDiv.className = 'ppe-item p-3 rounded-lg shadow required-ppe';
+                    // Always add 'required-ppe' if it's in the list for consistent styling
+                    ppeDiv.className = 'ppe-item required-ppe'; 
                     ppeDiv.dataset.ppeId = item.id;
-                    ppeDiv.innerHTML = `<span class="icon mb-1">${item.icon}</span><span class="ppe-item-name text-xs">${item.name}</span>`;
+                    ppeDiv.innerHTML = `<span class="icon">${item.icon || '❓'}</span><span class="ppe-item-name">${item.name}</span>`;
+                    container.appendChild(ppeDiv);
+                } else {
+                    console.warn(`PPE item with ID "${ppeId}" not found in safetyData.ppeItems.`);
+                    // Optionally render a placeholder for missing PPE definitions
+                    const ppeDiv = document.createElement('div');
+                    ppeDiv.className = 'ppe-item'; // Not 'required-ppe' styling if definition missing
+                    ppeDiv.innerHTML = `<span class="icon">❓</span><span class="ppe-item-name">${ppeId} (DEF MISSING)</span>`;
                     container.appendChild(ppeDiv);
                 }
             });
         }
 
         function handleActivitySelection(activityId) {
-            selectedActivityId = activityId;
+            selectedActivityId = activityId; // Update global selected ID
+
+            // Update button styles
             document.querySelectorAll('#activitiesContainer .activity-btn').forEach(btn => {
                 const isSelected = btn.dataset.itemId === activityId;
                 btn.classList.toggle('selected-activity', isSelected);
-                // Ensure Tailwind classes for selected state are properly applied/removed
-                if (isSelected) {
-                    btn.classList.add('bg-red-500', 'text-white', 'font-bold', 'border-red-500');
-                    btn.classList.remove('bg-gray-50', 'text-gray-700', 'hover:bg-gray-100', 'border-gray-300');
-                } else {
-                    btn.classList.remove('bg-red-500', 'text-white', 'font-bold', 'border-red-500');
-                    btn.classList.add('bg-gray-50', 'text-gray-700', 'hover:bg-gray-100', 'border-gray-300');
-                }
+                 // Tailwind classes are now mostly handled by .selected-activity in CSS
             });
 
             const selectedActivity = safetyData.activities.find(act => act.id === activityId);
@@ -528,24 +598,17 @@
             renderPpeItems(activityPpeMatrixContainer, requiredPpe);
             activityNoSelectionMessage.style.display = requiredPpe.length > 0 ? 'none' : 'block';
             
-            // ADDED: Auto-scroll to the PPE section
-            if (requiredPpe.length > 0) {
+            if (requiredPpe.length > 0 && window.innerWidth < 768) { // Auto-scroll on mobile
                  activityPpeMatrixContainer.parentElement.querySelector('h2').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
 
         function handleAreaSelection(areaId) {
-            selectedAreaId = areaId;
+            selectedAreaId = areaId; // Update global selected ID
+
             document.querySelectorAll('#areasContainer .area-btn').forEach(btn => {
                 const isSelected = btn.dataset.itemId === areaId;
                 btn.classList.toggle('selected-area', isSelected);
-                if (isSelected) {
-                    btn.classList.add('bg-red-500', 'text-white', 'font-bold', 'border-red-500');
-                    btn.classList.remove('bg-gray-50', 'text-gray-700', 'hover:bg-gray-100', 'border-gray-300');
-                } else {
-                    btn.classList.remove('bg-red-500', 'text-white', 'font-bold', 'border-red-500');
-                    btn.classList.add('bg-gray-50', 'text-gray-700', 'hover:bg-gray-100', 'border-gray-300');
-                }
             });
 
             const selectedArea = safetyData.areas.find(area => area.id === areaId);
@@ -553,19 +616,20 @@
             renderPpeItems(areaPpeMatrixContainer, requiredPpe);
             areaNoSelectionMessage.style.display = requiredPpe.length > 0 ? 'none' : 'block';
 
-            // ADDED: Auto-scroll to the PPE section
-            if (requiredPpe.length > 0) {
+            if (requiredPpe.length > 0 && window.innerWidth < 768) { // Auto-scroll on mobile
                 areaPpeMatrixContainer.parentElement.querySelector('h2').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
+        // --- End Data Rendering Logic ---
 
         function initApp() {
             renderSelectionButtons(activitiesContainer, safetyData.activities, handleActivitySelection, 'activity');
             renderSelectionButtons(areasContainer, safetyData.areas, handleAreaSelection, 'area');
-            showPage('landingPage'); // Ensure landing page is shown first
+            handleNavigation(); // Initial page load based on hash
         }
 
         document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
+�
